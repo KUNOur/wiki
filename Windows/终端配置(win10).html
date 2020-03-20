@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/wiki/static/css/colorful.css">
+    <link rel="Stylesheet" type="text/css" href="/wiki/static/css/style.css">
+    <link rel="shortcut icon" href="/wiki/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/wiki/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>终端配置(Win10) - kun's wiki</title>
+    <meta name="keywords" content="wiki"/>
+    <meta name="description" content="kun's wiki"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+  </head>
+
+  <body>
+    <div id="container" class="typo">
+      
+<div id="header">
+  <div id="post-nav">
+    <a href="/wiki/">kun's wiki</a>
+    &nbsp;&#187;&nbsp;
+    <a href="/wiki/#Windows">Windows</a>
+    &nbsp;&#187;&nbsp;终端配置(Win10)
+    <span class="updated">Updated&nbsp;
+    2020-03-19 17:36
+    </span>
+  </div>
+</div>
+<div class="clearfix"></div>
+<div id="content">
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">参考资料</a></li>
+<li><a href="#wsltty">wsltty</a><ul>
+<li><a href="#cmder">与cmder集成</a></li>
+<li><a href="#_2">配置文件路径及内容</a></li>
+</ul>
+</li>
+<li><a href="#wslwindows-subsystem-for-linux">wsl(Windows Subsystem for Linux)</a></li>
+<li><a href="#cmder_1">cmder</a></li>
+<li><a href="#babun"><del>babun</del></a><ul>
+<li><a href="#cygwin64"><del>替换cygwin为64位</del></a></li>
+</ul>
+</li>
+<li><a href="#zsh">zsh</a></li>
+<li><a href="#powerlevel-10k">powerlevel 10k</a><ul>
+<li><a href="#_3">字体安装</a></li>
+</ul>
+</li>
+<li><a href="#zinit">zinit</a></li>
+</ul>
+</div>
+<h2 id="_1">参考资料</h2>
+<ul>
+<li>
+<p><a href="https://www.jianshu.com/p/3e627ff45ccb" title="Windows 安装和配置 WSL">Windows 安装和配置 WSL</a></p>
+</li>
+<li>
+<p><a href="https://zhuanlan.zhihu.com/p/47743071" title="WSL 下的好终端 - wsltty">WSL 下的好终端 - wsltty</a></p>
+</li>
+<li>
+<p><a href="https://www.cnblogs.com/hongdada/p/7989236.html" title="babun安装，整合到cmder">babun安装，整合到cmder</a></p>
+</li>
+<li>
+<p><a href="https://blog.csdn.net/mengyoufengyu/article/details/53142403" title="babun替换cygwin内核（最新的2.6.0或64位cygwin内核）">babun替换cygwin内核（最新的2.6.0或64位cygwin内核）</a></p>
+</li>
+<li>
+<p><a href="https://zhuanlan.zhihu.com/p/98450570" title="zsh 启动速度慢的终极解决方案">zsh 启动速度慢的终极解决方案</a></p>
+</li>
+<li>
+<p><a href="https://www.cnblogs.com/michael-xiang/p/10466074.html" title="Cmder + Babun 打造 Windows 好用的终端工具">Cmder + Babun 打造 Windows 好用的终端工具</a></p>
+</li>
+<li>
+<p><a href="https://go2think.com/babun-theme/" title="Babun 配置 agnoster 主题">Babun 配置 agnoster 主题</a></p>
+</li>
+<li>
+<p><a href="https://www.zhihu.com/question/37181941" title="Windows下最漂亮的Terminal Emulator是什么？">Windows下最漂亮的Terminal Emulator是什么？</a></p>
+</li>
+<li>
+<p><a href="https://blog.csdn.net/qq_33033367/article/details/82820983" title="安装ubuntu系统，报错WslRegisterDistribution failed with error: 0x8007019e">安装ubuntu系统，报错WslRegisterDistribution failed with error: 0x8007019e</a></p>
+</li>
+</ul>
+<h2 id="wsltty">wsltty</h2>
+<p>Mintty as a terminal for WSL (Windows Subsystem for Linux)</p>
+<h3 id="cmder">与cmder集成</h3>
+<div class="hlcode"><pre><span class="nv">%LOCALAPPDATA%</span>\wsltty\bin\mintty.exe --WSL<span class="o">=</span>Ubuntu<span class="m">-18</span>.<span class="m">04</span> --configdir<span class="o">=</span><span class="nv">%APPDATA%</span>\wsltty -~
+</pre></div>
+
+
+<p><img alt="wsltty" src="../attach/wsltty.png" title="wsltty" /></p>
+<h3 id="_2">配置文件路径及内容</h3>
+<div class="hlcode"><pre><span class="nv">%userprofile%</span>\AppData\Roaming\wsltty\config
+</pre></div>
+
+
+<div class="hlcode"><pre># To use common configuration in <span class="nv">%APPDATA%</span>\mintty<span class="p">,</span> simply remove this file
+Font<span class="o">=</span>MesloLGS NF
+ClicksTargetApp<span class="o">=</span>no
+Scrollbar<span class="o">=</span>none
+FontWeight<span class="o">=</span><span class="m">400</span>
+FontHeight<span class="o">=</span><span class="m">12</span>
+CursorType<span class="o">=</span>block
+
+ForegroundColour<span class="o">=</span><span class="m">131</span><span class="p">,</span> <span class="m">148</span><span class="p">,</span> <span class="m">150</span>
+BackgroundColour<span class="o">=</span>  <span class="m">0</span><span class="p">,</span>  <span class="m">43</span><span class="p">,</span>  <span class="m">54</span>
+CursorColour<span class="o">=</span>    <span class="m">220</span><span class="p">,</span>  <span class="m">50</span><span class="p">,</span>  <span class="m">47</span>
+
+Black<span class="o">=</span>             <span class="m">7</span><span class="p">,</span>  <span class="m">54</span><span class="p">,</span>  <span class="m">66</span>
+BoldBlack<span class="o">=</span>         <span class="m">0</span><span class="p">,</span>  <span class="m">43</span><span class="p">,</span>  <span class="m">54</span>
+Red<span class="o">=</span>             <span class="m">220</span><span class="p">,</span>  <span class="m">50</span><span class="p">,</span>  <span class="m">47</span>
+BoldRed<span class="o">=</span>         <span class="m">203</span><span class="p">,</span>  <span class="m">75</span><span class="p">,</span>  <span class="m">22</span>
+Green<span class="o">=</span>           <span class="m">133</span><span class="p">,</span> <span class="m">153</span><span class="p">,</span>   <span class="m">0</span>
+BoldGreen<span class="o">=</span>        <span class="m">88</span><span class="p">,</span> <span class="m">110</span><span class="p">,</span> <span class="m">117</span>
+Yellow<span class="o">=</span>          <span class="m">181</span><span class="p">,</span> <span class="m">137</span><span class="p">,</span>   <span class="m">0</span>
+BoldYellow<span class="o">=</span>      <span class="m">101</span><span class="p">,</span> <span class="m">123</span><span class="p">,</span> <span class="m">131</span>
+Blue<span class="o">=</span>             <span class="m">38</span><span class="p">,</span> <span class="m">139</span><span class="p">,</span> <span class="m">210</span>
+BoldBlue<span class="o">=</span>        <span class="m">131</span><span class="p">,</span> <span class="m">148</span><span class="p">,</span> <span class="m">150</span>
+Magenta<span class="o">=</span>         <span class="m">211</span><span class="p">,</span>  <span class="m">54</span><span class="p">,</span> <span class="m">130</span>
+BoldMagenta<span class="o">=</span>     <span class="m">108</span><span class="p">,</span> <span class="m">113</span><span class="p">,</span> <span class="m">196</span>
+Cyan<span class="o">=</span>             <span class="m">42</span><span class="p">,</span> <span class="m">161</span><span class="p">,</span> <span class="m">152</span>
+BoldCyan<span class="o">=</span>        <span class="m">147</span><span class="p">,</span> <span class="m">161</span><span class="p">,</span> <span class="m">161</span>
+White<span class="o">=</span>           <span class="m">238</span><span class="p">,</span> <span class="m">232</span><span class="p">,</span> <span class="m">213</span>
+BoldWhite<span class="o">=</span>       <span class="m">253</span><span class="p">,</span> <span class="m">246</span><span class="p">,</span> <span class="m">227</span>
+</pre></div>
+
+
+<p><a href="https://github.com/mintty/wsltty" title="传送门">传送门</a></p>
+<h2 id="wslwindows-subsystem-for-linux">wsl(Windows Subsystem for Linux)</h2>
+<div class="hlcode"><pre># win+x，选择Windows PowerShell（管理员）输入
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+</pre></div>
+
+
+<p>在普通cmd中启动</p>
+<div class="hlcode"><pre>ubuntu<span class="m">1804</span>
+</pre></div>
+
+
+<h2 id="cmder_1">cmder</h2>
+<p><a href="https://cmder.net/" title="传送门">传送门</a></p>
+<h2 id="babun"><del>babun</del></h2>
+<p><a href="http://babun.github.io/" title="传送门">传送门</a></p>
+<h3 id="cygwin64"><del>替换cygwin为64位</del></h3>
+<p><del><a href="https://github.com/babun/babun/wiki/64-bit" title="传送门">传送门</a></del></p>
+<p><del>终端被<a href="https://cygwin.com/acronyms/" title="BLODA">BLODA</a>影响严重，弃用babun</del></p>
+<h2 id="zsh">zsh</h2>
+<div class="hlcode"><pre>sudo apt-get install zsh
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="c"># 将用户的shell设置为/usr/bin/zsh</span>
+vim /etc/passwd
+</pre></div>
+
+
+<h2 id="powerlevel-10k">powerlevel 10k</h2>
+<p><a href="https://github.com/romkatv/powerlevel10k" title="传送门">传送门</a></p>
+<div class="hlcode"><pre>vim ~/.zshrc
+</pre></div>
+
+
+<div class="hlcode"><pre><span class="c"># Add zinit ice depth=1; zinit light romkatv/powerlevel10k to ~/.zshrc</span>
+zinit ice <span class="nv">depth</span><span class="o">=</span>1; zinit light romkatv/powerlevel10k
+</pre></div>
+
+
+<h3 id="_3">字体安装</h3>
+<ul>
+<li>
+<p><a href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf" title="MesloLGS NF Regular.ttf">MesloLGS NF Regular.ttf</a></p>
+</li>
+<li>
+<p><a href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf" title="MesloLGS NF Bold.ttf">MesloLGS NF Bold.ttf</a></p>
+</li>
+<li>
+<p><a href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf" title="MesloLGS NF Italic.ttf">MesloLGS NF Italic.ttf</a></p>
+</li>
+<li>
+<p><a href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf" title="MesloLGS NF Bold Italic.ttf">MesloLGS NF Bold Italic.ttf</a></p>
+</li>
+</ul>
+<h2 id="zinit">zinit</h2>
+<p><a href="https://github.com/zdharma/zinit" title="传送门">传送门</a></p>
+<div class="hlcode"><pre>sh -c <span class="s2">&quot;$(curl -fsSL https://raw.githubusercontent.com/zdharma/zinit/master/doc/install.sh)&quot;</span>
+</pre></div>
+
+
+<div class="hlcode"><pre>vim ~/.zshrc
+
+<span class="c"># 添加如下插件</span>
+zplugin light zsh-users/zsh-autosuggestions
+zplugin light zdharma/fast-syntax-highlighting
+zplugin snippet OMZ::lib/clipboard.zsh
+zplugin snippet OMZ::lib/completion.zsh
+zplugin snippet OMZ::lib/history.zsh
+zplugin snippet OMZ::lib/key-bindings.zsh
+zplugin snippet OMZ::lib/git.zsh
+</pre></div>
+  
+</div>
+    </div>
+    <div id="footer">
+      <div class="footer-left">
+        <p>
+        Copyright © 2020 kun.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.
+        Theme by <a href="https://github.com/tankywoo/yasimple_x2" target="_blank">YASimple_X2</a>.
+        </p>
+      </div> <!-- end footer-left -->
+      <div class="footer-right">
+        <p>Site Generated 2020-03-20 23:13:52</p>
+      </div> <!-- end footer-right -->
+    </div>
+
+    
+    
+  </body>
+</html>
