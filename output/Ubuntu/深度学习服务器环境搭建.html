@@ -1,0 +1,282 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/wiki/static/css/colorful.css">
+    <link rel="Stylesheet" type="text/css" href="/wiki/static/css/style.css">
+    <link rel="shortcut icon" href="/wiki/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/wiki/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>深度学习服务器环境搭建 - kun's wiki</title>
+    <meta name="keywords" content="wiki"/>
+    <meta name="description" content="kun's wiki"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+  </head>
+
+  <body>
+    <div id="container" class="typo">
+      
+<div id="header">
+  <div id="post-nav">
+    <a href="/wiki/">kun's wiki</a>
+    &nbsp;&#187;&nbsp;
+    <a href="/wiki/#Ubuntu">Ubuntu</a>
+    &nbsp;&#187;&nbsp;深度学习服务器环境搭建
+    <span class="updated">Updated&nbsp;
+    2020-03-29 16:04
+    </span>
+  </div>
+</div>
+<div class="clearfix"></div>
+<div id="content">
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">参考链接</a></li>
+<li><a href="#todo">TODO</a></li>
+<li><a href="#for">For 用户</a></li>
+<li><a href="#for_1">For 管理员</a><ul>
+<li><a href="#lxdzfs">安装LXD,ZFS</a><ul>
+<li><a href="#step1-zpool">STEP.1 创建zpool池</a></li>
+<li><a href="#step2-lxd">STEP.2 LXD默认配置初始化</a></li>
+<li><a href="#step3">STEP.3 修改默认配置文件</a></li>
+</ul>
+</li>
+<li><a href="#_2">容器的创建</a></li>
+<li><a href="#_3">容器基本配置</a><ul>
+<li><a href="#step1">STEP.1 基础软件及显卡驱动</a></li>
+<li><a href="#step2">STEP.2 远程桌面</a></li>
+<li><a href="#step3_1">STEP.3 宿主机到容器端口转发</a></li>
+</ul>
+</li>
+<li><a href="#_4">容器管理</a></li>
+<li><a href="#_5">容器模板</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="_1">参考链接</h2>
+<p><a href="https://abcdabcd987.com/setup-shared-gpu-server-for-labs/" title="为实验室建立公用GPU服务器">为实验室建立公用GPU服务器</a></p>
+<p><a href="https://github.com/shenuiuin/LXD_GPU_SERVER" title="实验室GPU服务器的LXD虚拟化">实验室GPU服务器的LXD虚拟化（本文内容主要抄袭对象;D）</a></p>
+<p><a href="https://blog.csdn.net/weixin_42749767/article/details/83720831" title="实验室GPU服务器共享方案 LXD">实验室GPU服务器共享方案 LXD</a></p>
+<p><a href="https://www.dazhuanlan.com/2019/11/20/5dd51368b3475/" title="使用 LXD 搭建多人使用的 GPU 服务器">使用 LXD 搭建多人使用的 GPU 服务器</a></p>
+<p><a href="https://butui.me/post/lxd-gpu-server/" title="面向深度学习训练的LXD GPU 服务器搭建、管理与使用">面向深度学习训练的LXD GPU 服务器搭建、管理与使用</a></p>
+<h2 id="todo">TODO</h2>
+<p><input type="checkbox" disabled="disabled"/> LXD容器网络桥接，避免用户必须通过端口转发<br />
+<input type="checkbox" disabled="disabled"/> anaconda + tensorflow 安装</p>
+<h2 id="for">For 用户</h2>
+<p><input type="checkbox" disabled="disabled" checked="checked"/> 每个用户一台容器，拥有所有权限<br />
+<input type="checkbox" disabled="disabled" checked="checked"/> 基于XRDP + MATE的远程桌面</p>
+<h2 id="for_1">For 管理员</h2>
+<h3 id="lxdzfs">安装LXD,ZFS</h3>
+<div class="hlcode"><pre>sudo apt install zfsutils-linux lxd
+</pre></div>
+
+
+<blockquote>
+<p>在Vmware + Ubuntu16.04.6上安装后出现<code>invalid argument for this pool operation</code>,解决办法参考<a href="https://github.com/openzfs/zfs/issues/8406" title="传送门">传送门</a>,安装<code>zfs-dmks</code>(<code>sudo apt-get install zfs-dkms</code>)</p>
+</blockquote>
+<h4 id="step1-zpool">STEP.1 创建zpool池</h4>
+<div class="hlcode"><pre><span class="c"># 查看当前硬盘分区</span>
+sudo fdisk -l
+
+<span class="c"># 为硬盘分区，此处是sda</span>
+sudo fdisk /dev/sda
+
+<span class="c"># 在块设备 /dev/sda1 上创建一个ZFS存储池</span>
+sudo lxc storage create zfs-pool zfs <span class="nb">source</span><span class="o">=</span>/dev/sda1
+</pre></div>
+
+
+<blockquote>
+<p>在实际服务器环境测试的时候发现在创建的容器中使用apt-get速度奇慢,zpool挂载在<code>希捷酷鱼2T/5400RPM</code>,一开始怀疑是配置问题，不过在Vmware + Ubuntu16.04.6按同样配置虚拟出一块硬盘进行挂载测试没有上述问题。最后解决办法参考<a href="https://askubuntu.com/questions/461712/apt-get-in-lxc-container-is-very-slow-on-ubuntu-server-12-04" title="传送门1">传送门1</a> <a href="https://unix.stackexchange.com/questions/7238/how-to-make-dpkg-faster" title="传送门1">传送门1</a><br />
+方案1：在宿主机上<code>sudo zfs set sync=disabled zfs-pool</code> 实测可提升十倍速度不止。<br />
+方案2：在容器中 <code>echo "force-unsafe-io" &gt; /etc/dpkg/dpkg.cfg.d/force-unsafe-io</code> 实测比方案1速度慢一倍左右。</p>
+</blockquote>
+<p>最后采用方案1</p>
+<div class="hlcode"><pre>sudo zfs <span class="nb">set </span><span class="nv">sync</span><span class="o">=</span>disabled zfs-pool
+</pre></div>
+
+
+<h4 id="step2-lxd">STEP.2 LXD默认配置初始化</h4>
+<div class="hlcode"><pre><span class="c"># lxd初始化</span>
+sudo lxd init 
+</pre></div>
+
+
+<div class="hlcode"><pre>Would you like to use LXD clustering? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>no<span class="o">]</span>: 
+Do you want to configure a new storage pool? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span>: no
+Would you like to connect to a MAAS server? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>no<span class="o">]</span>: 
+Would you like to create a new <span class="nb">local </span>network bridge? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span>: 
+What should the new bridge be called? <span class="o">[</span><span class="nv">default</span><span class="o">=</span>lxdbr0<span class="o">]</span>: 
+What IPv4 address should be used? <span class="o">(</span>CIDR subnet notation, “auto” or “none”<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>auto<span class="o">]</span>: 
+What IPv6 address should be used? <span class="o">(</span>CIDR subnet notation, “auto” or “none”<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>auto<span class="o">]</span>: 
+Would you like LXD to be available over the network? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>no<span class="o">]</span>: 
+Would you like stale cached images to be updated automatically? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span> 
+Would you like a YAML <span class="s2">&quot;lxd init&quot;</span> preseed to be printed? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>no<span class="o">]</span>:
+</pre></div>
+
+
+<h4 id="step3">STEP.3 修改默认配置文件</h4>
+<div class="hlcode"><pre><span class="c"># 修改默认文件编辑器</span>
+sudo update-alternatives --config editor 
+
+<span class="c"># 添加前面创建的zfs-pool</span>
+sudo lxc profile edit default
+</pre></div>
+
+
+<p><img alt="lxd-profile-default" src="../attach/lxd-profile-default.png" title="lxd-profile-default" /></p>
+<h3 id="_2">容器的创建</h3>
+<div class="hlcode"><pre>sudo lxc remote add tuna-images https://mirrors.tuna.tsinghua.edu.cn/lxc-images/ --protocol<span class="o">=</span>simplestreams --public
+
+sudo lxc launch tuna-images:ubuntu/16.04/amd64 ubuntu-ai
+
+sudo lxc config device add ubuntu-ai gpu gpu
+sudo lxc config device add ubuntu-ai nvidia-uvm unix-char <span class="nv">path</span><span class="o">=</span>/dev/nvidia-uvm
+sudo lxc <span class="nb">exec </span>ubuntu-ai bash
+</pre></div>
+
+
+<blockquote>
+<ul>
+<li>在实际服务器环境LXD容器中无法运行CUDAsamples的时候 returned 999，解决办法参考<a href="https://baijiahao.baidu.com/s?id=1629663346009324781&amp;wfr=spider&amp;for=pc" title="传送门">传送门</a>，<code>sudo lxc config device add ubuntu-ai nvidia-uvm unix-char path=/dev/nvidia-uvm</code>。</li>
+<li>另外发现宿主机的/dev/nvidia-uvm会出现开机没有的情况，解决方案参考<a href="https://askubuntu.com/questions/590319/how-do-i-enable-automatically-nvidia-uvm" title="传送门1">传送门1</a> <a href="https://blog.csdn.net/lihe4151021/article/details/90237681" title="传送门2">传送门2</a> <a href="https://www.machunjie.com/trouble/88.html" title="传送门3">传送门3</a>，增加以下脚本到/etc/init.d/下。</li>
+</ul>
+</blockquote>
+<div class="hlcode"><pre><span class="c">#!/bin/bash</span>
+/sbin/modprobe nvidia
+
+<span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$?&quot;</span> -eq 0 <span class="o">]</span>; <span class="k">then</span>
+  <span class="c"># Count the number of NVIDIA controllers found.</span>
+  <span class="nv">NVDEVS</span><span class="o">=</span><span class="sb">`</span>lspci | grep -i NVIDIA<span class="sb">`</span>
+  <span class="nv">N3D</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo</span> <span class="s2">&quot;$NVDEVS&quot;</span> | grep <span class="s2">&quot;3D controller&quot;</span> | wc -l<span class="sb">`</span>
+  <span class="nv">NVGA</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo</span> <span class="s2">&quot;$NVDEVS&quot;</span> | grep <span class="s2">&quot;VGA compatible controller&quot;</span> | wc -l<span class="sb">`</span>
+
+  <span class="nv">N</span><span class="o">=</span><span class="sb">`</span>expr <span class="nv">$N3D</span> + <span class="nv">$NVGA</span> - 1<span class="sb">`</span>
+  <span class="k">for </span>i in <span class="sb">`</span>seq 0 <span class="nv">$N</span><span class="sb">`</span>; <span class="k">do</span>
+<span class="k">    </span>mknod -m 666 /dev/nvidia<span class="nv">$i</span> c 195 <span class="nv">$i</span>
+  <span class="k">done</span>
+
+<span class="k">  </span>mknod -m 666 /dev/nvidiactl c 195 255
+
+<span class="k">else</span>
+<span class="k">  </span><span class="nb">exit </span>1
+<span class="k">fi</span>
+
+/sbin/modprobe nvidia-uvm
+
+<span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$?&quot;</span> -eq 0 <span class="o">]</span>; <span class="k">then</span>
+  <span class="c"># Find out the major device number used by the nvidia-uvm driver</span>
+  <span class="nv">D</span><span class="o">=</span><span class="sb">`</span>grep nvidia-uvm /proc/devices | awk <span class="s1">&#39;{print $1}&#39;</span><span class="sb">`</span>
+
+  mknod -m 666 /dev/nvidia-uvm c <span class="nv">$D</span> 0
+<span class="k">else</span>
+<span class="k">  </span><span class="nb">exit </span>1
+<span class="k">fi</span>
+</pre></div>
+
+
+<h3 id="_3">容器基本配置</h3>
+<h4 id="step1">STEP.1 基础软件及显卡驱动</h4>
+<div class="hlcode"><pre>sudo vim /etc/apt/sources.list
+
+deb http://mirrors.163.com/ubuntu/ bionic main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ bionic main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ bionic-security main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ bionic-security main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ bionic-updates main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ bionic-updates main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ bionic-proposed main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ bionic-proposed main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ bionic-backports main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ bionic-backports main restricted universe multiverse
+
+sudo apt-get update
+
+sudo apt install make cmake openssh-server gcc g++ build-essential ssh
+
+sudo lxc file push /home/ubuntu/libcudnn7-dev_7.5.1.10-1+cuda10.1_amd64.deb  ubuntu-ai/home/ubuntu/
+sudo lxc file push /home/ubuntu/libcudnn7-doc_7.5.1.10-1+cuda10.1_amd64.deb  ubuntu-ai/home/ubuntu/
+sudo lxc file push /home/ubuntu/libcudnn7_7.5.1.10-1+cuda10.1_amd64.deb  ubuntu-ai/home/ubuntu/
+sudo lxc file push /home/ubuntu/cuda_10.1.168_418.67_linux.run  ubuntu-ai/home/ubuntu/
+sudo lxc file push /home/ubuntu/NVIDIA-Linux-x86_64-440.31.run  ubuntu-ai/home/ubuntu/
+
+<span class="c">#容器显卡驱动以及cuda以及cudnn安装</span>
+sudo sh ./NVIDIA-Linux-X86_64-<span class="o">[</span>YOURVERSION<span class="o">]</span>.run --no-kernel-module
+sudo sh cuda_10.1.168_418.67_linux.run
+
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span>/usr/local/cuda-10.1/bin<span class="k">${</span><span class="nv">PATH</span><span class="p">:+:</span><span class="k">${</span><span class="nv">PATH</span><span class="k">}}</span>
+<span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span>/usr/local/cuda-10.1/lib64<span class="k">${</span><span class="nv">LD_LIBRARY_PATH</span><span class="p">:+:</span><span class="k">${</span><span class="nv">LD_LIBRARY_PATH</span><span class="k">}}</span>
+
+sudo dpkg -i libcudnn7_7.4.2.24-1+cuda10.0_amd64.deb
+sudo dpkg -i libcudnn7-dev_7.4.2.24-1+cuda10.0_amd64.deb
+sudo dpkg -i libcudnn7-doc_7.4.2.24-1+cuda10.0_amd64.deb
+</pre></div>
+
+
+<h4 id="step2">STEP.2 远程桌面</h4>
+<div class="hlcode"><pre>sudo apt-get install mate-core mate-desktop-environment mate-notification-daemon
+
+sudo apt-get install tightvncserver
+
+sudo apt-get install xrdp
+
+<span class="nb">echo </span>mate-session &gt;~/.xsession
+</pre></div>
+
+
+<h4 id="step3_1">STEP.3 宿主机到容器端口转发</h4>
+<div class="hlcode"><pre><span class="c"># xrdp转发</span>
+sudo iptables -t nat -A PREROUTING -d 宿主机ip -p tcp --dport 60611 -j DNAT --to-destination 容器ip:3389
+
+<span class="c"># ssh转发</span>
+sudo iptables -t nat -A PREROUTING -d 宿主机ip -p tcp --dport 60601 -j DNAT --to-destination 容器ip:22
+</pre></div>
+
+
+<h3 id="_4">容器管理</h3>
+<div class="hlcode"><pre><span class="c"># 列出规则</span>
+sudo iptables -t nat -L PREROUTING --line-number
+
+<span class="c"># 删除规则</span>
+sudo iptables -t nat -D PREROUTING 1
+
+<span class="c"># 保存和加载规则</span>
+sudo apt-get install iptables-persistent
+sudo netfilter-persistent save
+sudo netfilter-persistent reload
+</pre></div>
+
+
+<h3 id="_5">容器模板</h3>
+<div class="hlcode"><pre><span class="c"># 停止容器</span>
+sudo lxc stop ubuntu-ai
+
+<span class="c"># 保存为镜像</span>
+sudo lxc publish <span class="nb">test</span> --alias ubuntu-template-base --public
+
+<span class="c"># 列出当前已有的镜像</span>
+sudo lxc image list
+
+<span class="c"># 从已保存的镜像创建新容器</span>
+sudo lxc launch ubuntu-template-base new_container
+</pre></div>
+  
+</div>
+    </div>
+    <div id="footer">
+      <div class="footer-left">
+        <p>
+        Copyright © 2020 kun.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.
+        Theme by <a href="https://github.com/tankywoo/yasimple_x2" target="_blank">YASimple_X2</a>.
+        </p>
+      </div> <!-- end footer-left -->
+      <div class="footer-right">
+        <p>Site Generated 2020-03-29 22:37:50</p>
+      </div> <!-- end footer-right -->
+    </div>
+
+    
+    
+  </body>
+</html>
