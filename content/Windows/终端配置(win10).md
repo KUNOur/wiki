@@ -25,11 +25,12 @@ collection: 美化
 + [Windows下最漂亮的Terminal Emulator是什么？](https://www.zhihu.com/question/37181941 "Windows下最漂亮的Terminal Emulator是什么？")
 
 + [安装ubuntu系统，报错WslRegisterDistribution failed with error: 0x8007019e](https://blog.csdn.net/qq_33033367/article/details/82820983 "安装ubuntu系统，报错WslRegisterDistribution failed with error: 0x8007019e")
+
 ## wsltty
 
 Mintty as a terminal for WSL (Windows Subsystem for Linux)
 
-### 与cmder集成 
+### 与cmder集成
 
 ``` bat
 %LOCALAPPDATA%\wsltty\bin\mintty.exe --WSL=Ubuntu-18.04 --configdir=%APPDATA%\wsltty -~
