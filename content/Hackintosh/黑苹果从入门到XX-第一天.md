@@ -1,5 +1,5 @@
 ---
-title: "黑苹果从入门到?-第一天"
+title: "黑苹果从入门到XX-第一天"
 date: 2020-04-06 10:52
 tag: uefi,bios,dell dell venue 11 pro 7130,U大师
 ---
