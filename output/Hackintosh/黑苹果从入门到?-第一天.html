@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="Stylesheet" type="text/css" href="/wiki/static/css/colorful.css">
+    <link rel="Stylesheet" type="text/css" href="/wiki/static/css/style.css">
+    <link rel="shortcut icon" href="/wiki/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/wiki/favicon.ico" type="image/x-icon">
+    <link rel="alternate" type="application/atom+xml" href="atom.xml" title="Atom feed">
+    <title>黑苹果从入门到?-第一天 - kun's wiki</title>
+    <meta name="keywords" content="wiki"/>
+    <meta name="description" content="kun's wiki"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+  </head>
+
+  <body>
+    <div id="container" class="typo">
+      
+<div id="header">
+  <div id="post-nav">
+    <a href="/wiki/">kun's wiki</a>
+    &nbsp;&#187;&nbsp;
+    <a href="/wiki/#Hackintosh">Hackintosh</a>
+    &nbsp;&#187;&nbsp;黑苹果从入门到?-第一天
+    <span class="updated">Updated&nbsp;
+    2020-04-06 10:52
+    </span>
+  </div>
+</div>
+<div class="clearfix"></div>
+<div id="content">
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#_1">参考链接</a></li>
+<li><a href="#_2">准备工作</a></li>
+<li><a href="#pe">PE制作</a></li>
+<li><a href="#macos">macOs镜像制作</a></li>
+<li><a href="#venue">重新分配venue分区</a></li>
+<li><a href="#macos_1">安装macOs</a></li>
+</ul>
+</div>
+<h2 id="_1">参考链接</h2>
+<ul>
+<li>
+<p><a href="https://www.jianshu.com/p/c847b0dcbe11" title="2020首发黑苹果 10.15.3 安装教程详细图文附资料">2020首发黑苹果 10.15.3 安装教程详细图文附资料</a></p>
+</li>
+<li>
+<p><a href="https://www.cnblogs.com/SemiconductorKING/p/6536888.html" title="黑苹果macOS Sierra 10.12 安装教程(venue11 pro测试)">黑苹果macOS Sierra 10.12 安装教程(venue11 pro测试)</a></p>
+</li>
+<li>
+<p><a href="https://blog.daliansky.net/macOS-Mojave-10.14.6-18G87-Release-version-with-Clover-5033-original-image.html" title="【黑果小兵】macOS Mojave 10.14.6 18G87 正式版 with Clover 5050原版镜像[双EFI双平台终极版]">【黑果小兵】macOS Mojave 10.14.6 18G87 正式版 with Clover 5050原版镜像[双EFI双平台终极版]</a></p>
+</li>
+<li>
+<p><a href="https://www.zxm5.com/436.html" title="小李科技|神舟战神K610-i54210m d1安装黑苹果的经历">小李科技|神舟战神K610-i54210m d1安装黑苹果的经历</a></p>
+</li>
+<li>
+<p><a href="https://blog.daliansky.net/MacOS-installation-tutorial-XiaoMi-Pro-installation-process-records.html" title="macOS安装教程兼小米Pro安装过程记录">macOS安装教程兼小米Pro安装过程记录</a></p>
+</li>
+<li>
+<p><a href="https://www.cnblogs.com/souther/p/4488336.html" title="DELL VENUE 11 PRO系统损坏之后的解决办法">DELL VENUE 11 PRO系统损坏之后的解决办法</a></p>
+</li>
+</ul>
+<h2 id="_2">准备工作</h2>
+<ul>
+<li>
+<p>8G U盘 * 1，用来安装PE</p>
+</li>
+<li>
+<p>8G以上 U盘 * 1，用来安装macOs</p>
+</li>
+<li>
+<p>HUB * 1 ,用来扩展鼠标、键盘和U盘</p>
+</li>
+<li>
+<p>U大师 uefi版或者二合一版本，用来制作PE</p>
+</li>
+<li>
+<p><del>transmac 10.4，用来写入macOs镜像</del></p>
+</li>
+<li>
+<p>balenaEtcher 1.5.80，用来写入macOs镜像</p>
+</li>
+<li>
+<p>黑果小兵 macOS Mojave 10.14.6 18G87 镜像</p>
+</li>
+</ul>
+<h2 id="pe">PE制作</h2>
+<p>打开<code>U大师--&gt;U盘制作--&gt;开始制作</code>即可</p>
+<h2 id="macos">macOs镜像制作</h2>
+<p>打开<code>balenaEtcher--&gt;select image--&gt;select target--&gt;flash</code>即可</p>
+<h2 id="venue">重新分配venue分区</h2>
+<p>venue默认会进原有的win10的启动器，所以首先进PE，将整个硬盘的原有分区全部删除。</p>
+<blockquote>
+<p>在已有win10 uefi的情况下进PE,实测需要进venue的bios将boot设置为legacy启动才能进PE</p>
+</blockquote>
+<h2 id="macos_1">安装macOs</h2>
+<p>直接插上写入macOs镜像的U盘，启动进入安装</p>
+<blockquote>
+<p>安装过程出现8苹果花屏，目前的解决办法是发现在我下载到的Clover的config.plist文件中Graphics被注入了id(何为注入id，等以后深入学习后再来看),最后将Graphics的代码改成如下所示后系统安装可正常继续下去。</p>
+</blockquote>
+<div class="hlcode"><pre>    <span class="nt">&lt;key&gt;</span>Graphics<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;dict&gt;</span>
+        <span class="nt">&lt;key&gt;</span>EDID<span class="nt">&lt;/key&gt;</span>
+        <span class="nt">&lt;dict&gt;</span>
+            <span class="nt">&lt;key&gt;</span>Inject<span class="nt">&lt;/key&gt;</span>
+            <span class="nt">&lt;false/&gt;</span>
+        <span class="nt">&lt;/dict&gt;</span>
+        <span class="nt">&lt;key&gt;</span>Inject<span class="nt">&lt;/key&gt;</span>
+        <span class="nt">&lt;dict&gt;</span>
+            <span class="nt">&lt;key&gt;</span>ATI<span class="nt">&lt;/key&gt;</span>
+            <span class="nt">&lt;false/&gt;</span>
+            <span class="nt">&lt;key&gt;</span>Intel<span class="nt">&lt;/key&gt;</span>
+            <span class="nt">&lt;false/&gt;</span>
+            <span class="nt">&lt;key&gt;</span>NVidia<span class="nt">&lt;/key&gt;</span>
+            <span class="nt">&lt;false/&gt;</span>
+        <span class="nt">&lt;/dict&gt;</span>
+    <span class="nt">&lt;/dict&gt;</span>
+</pre></div>
+
+
+<p>相关安装过程参照黑果小兵blog，此处就不重画轮子了。</p>
+  
+</div>
+    </div>
+    <div id="footer">
+      <div class="footer-left">
+        <p>
+        Copyright © 2020 kun.
+        Powered by <a href="http://simiki.org/" target="_blank">Simiki</a>.
+        Theme by <a href="https://github.com/tankywoo/yasimple_x2" target="_blank">YASimple_X2</a>.
+        </p>
+      </div> <!-- end footer-left -->
+      <div class="footer-right">
+        <p>Site Generated 2020-04-06 16:43:40</p>
+      </div> <!-- end footer-right -->
+    </div>
+
+    
+    
+  </body>
+</html>
