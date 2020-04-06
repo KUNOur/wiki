@@ -61,7 +61,7 @@
 <p><a href="https://butui.me/post/lxd-gpu-server/" title="面向深度学习训练的LXD GPU 服务器搭建、管理与使用">面向深度学习训练的LXD GPU 服务器搭建、管理与使用</a></p>
 <h2 id="todo">TODO</h2>
 <p><input type="checkbox" disabled="disabled"/> LXD容器网络桥接，避免用户必须通过端口转发<br />
-<input type="checkbox" disabled="disabled"/> anaconda + tensorflow 安装</p>
+<input type="checkbox" disabled="disabled" checked="checked"/> anaconda + tensorflow 安装</p>
 <h2 id="for">For 用户</h2>
 <p><input type="checkbox" disabled="disabled" checked="checked"/> 每个用户一台容器，拥有所有权限<br />
 <input type="checkbox" disabled="disabled" checked="checked"/> 基于XRDP + MATE的远程桌面</p>
@@ -98,26 +98,26 @@ sudo lxc storage create zfs-pool zfs <span class="nb">source</span><span class="
 
 <h4 id="step2-lxd">STEP.2 LXD默认配置初始化</h4>
 <div class="hlcode"><pre><span class="c"># lxd初始化</span>
-sudo lxd init 
+sudo lxd init
 </pre></div>
 
 
-<div class="hlcode"><pre>Would you like to use LXD clustering? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>no<span class="o">]</span>: 
+<div class="hlcode"><pre>Would you like to use LXD clustering? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>no<span class="o">]</span>:
 Do you want to configure a new storage pool? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span>: no
-Would you like to connect to a MAAS server? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>no<span class="o">]</span>: 
-Would you like to create a new <span class="nb">local </span>network bridge? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span>: 
-What should the new bridge be called? <span class="o">[</span><span class="nv">default</span><span class="o">=</span>lxdbr0<span class="o">]</span>: 
-What IPv4 address should be used? <span class="o">(</span>CIDR subnet notation, “auto” or “none”<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>auto<span class="o">]</span>: 
-What IPv6 address should be used? <span class="o">(</span>CIDR subnet notation, “auto” or “none”<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>auto<span class="o">]</span>: 
-Would you like LXD to be available over the network? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>no<span class="o">]</span>: 
-Would you like stale cached images to be updated automatically? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span> 
+Would you like to connect to a MAAS server? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>no<span class="o">]</span>:
+Would you like to create a new <span class="nb">local </span>network bridge? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span>:
+What should the new bridge be called? <span class="o">[</span><span class="nv">default</span><span class="o">=</span>lxdbr0<span class="o">]</span>:
+What IPv4 address should be used? <span class="o">(</span>CIDR subnet notation, “auto” or “none”<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>auto<span class="o">]</span>:
+What IPv6 address should be used? <span class="o">(</span>CIDR subnet notation, “auto” or “none”<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>auto<span class="o">]</span>:
+Would you like LXD to be available over the network? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>no<span class="o">]</span>:
+Would you like stale cached images to be updated automatically? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>yes<span class="o">]</span>
 Would you like a YAML <span class="s2">&quot;lxd init&quot;</span> preseed to be printed? <span class="o">(</span>yes/no<span class="o">)</span> <span class="o">[</span><span class="nv">default</span><span class="o">=</span>no<span class="o">]</span>:
 </pre></div>
 
 
 <h4 id="step3">STEP.3 修改默认配置文件</h4>
 <div class="hlcode"><pre><span class="c"># 修改默认文件编辑器</span>
-sudo update-alternatives --config editor 
+sudo update-alternatives --config editor
 
 <span class="c"># 添加前面创建的zfs-pool</span>
 sudo lxc profile edit default
@@ -272,7 +272,7 @@ sudo lxc launch ubuntu-template-base new_container
         </p>
       </div> <!-- end footer-left -->
       <div class="footer-right">
-        <p>Site Generated 2020-03-29 22:45:10</p>
+        <p>Site Generated 2020-04-06 16:43:40</p>
       </div> <!-- end footer-right -->
     </div>
 
